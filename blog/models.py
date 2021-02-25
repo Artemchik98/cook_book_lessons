@@ -7,7 +7,7 @@ from django.db import models
 from django.utils import timezone
 from django.contrib.auth.models import User
 from django.urls import reverse
-
+from taggit.managers import TaggableManager
 class Post(models.Model):
     STATUS_CHOICES = (
         ('draft', 'Draft'),
@@ -23,7 +23,7 @@ class Post(models.Model):
     updated = models.DateTimeField(auto_now=True, verbose_name='Дата изменения')
     status = models.CharField(max_length=10, choices=STATUS_CHOICES, default='draft', verbose_name='Статус публикации')
     image = models.ImageField(upload_to='product_images/', blank=False, verbose_name='Изображение')
-
+    tags = TaggableManager()
     class Meta:
         ordering = ('-publish',)
 
@@ -48,3 +48,24 @@ class PostPoint(models.Model):
     post_header = models.CharField(max_length=250, default='HEADER')
     post_point_text = models.TextField(verbose_name='Пункт поста')
     post_images = models.ImageField(upload_to=save_images, blank=True, verbose_name='Изображение пункта',)
+
+    def __str__(self):
+        return 'Пункт поста {}'.format(self.post.title)
+
+
+class Comment(models.Model):
+    post = models.ForeignKey(Post, on_delete=models.CASCADE, related_name='comment')
+    name = models.CharField(max_length=80)
+    email = models.EmailField()
+    body = models.TextField()
+    created = models.DateTimeField(auto_now_add=True)
+    updated = models.DateTimeField(auto_now=True)
+    active = models.BooleanField(default=True)
+
+    class Meta:
+        ordering = ('created',)
+
+    def __str__(self):
+        return 'Комментарий написан {} о {}'.format(self.name, self.post)
+
+
