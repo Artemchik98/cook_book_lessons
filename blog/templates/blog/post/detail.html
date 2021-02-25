@@ -12,6 +12,10 @@
                 <div class="card-body">
                     <h5 class="card-title">{{ post.title }}</h5>
                     <p class="card-text">{{ post.short_description }}</p>
+                    <p>
+                        <a href="{% url "blog:post_share" post.id %}">Поделиться рецептом</a>
+                    </p>
+
                 </div>
                 {% for post_point in post_points %}
                     <div class="card-body">
@@ -20,7 +24,7 @@
                             <img src="{{ MEDIA_URL }}{{ post_point.post_image.url }}" class="card-img-top" alt="..."
                             style="width: 500px">
                         {% endif %}
-                        {% if post_point.post_point_header == "Ингредиенты" %}
+                        {% if post_point.post_point_header == "Ингридиенты" %}
                             <pre class="card-text">{{ post_point.post_point_text }}</pre>
                         {% else %}
                             <p class="card-text">{{ post_point.post_point_text }}</p>
