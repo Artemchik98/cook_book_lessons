@@ -41,3 +41,10 @@ p.date {
     font-style: italic;
 }
 
+.pagination {
+    margin: 40px auto;
+    font-weight: bold;
+}
+.step-links {
+    margin: 0 auto;
+}

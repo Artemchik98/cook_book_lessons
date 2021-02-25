@@ -1,13 +1,27 @@
-{% extends "blog/base.html" %}
-{% block title %}My Blog{% endblock %}
-{% block content %}
-    <h1>My Blog</h1>
-    {% for post in posts %}
-        <h2>
-            <a href="{{ post.get_absolute_url }}">{{ post.title }}</a>
-        </h2>
-        <p>{{post.short_descriptions}}</p>
-        <p class="date">Опубликовано  {{post.publish}} автор : {{post.author}}</p>
-        {{ post.body|truncatewords:30|linebreaks }}
-    {% endfor %}
-{% endblock %}
+{%extends 'blog/base.html'%}
+{%block title%} My blog {%endblock%}
+{%block content%}
+    <h1 class="title text-center my-3">Кулинарная книга</h1>
+    <div class="container">
+        <div class="card-deck">
+            {% for post in posts %}
+                <div class="card">
+                    <a href="{{ post.get_absolute_url }}">
+                        <img src="{{ MEDIA_URL }}{{ post.image.url }}" class="card-img-top" alt="...">
+                    </a>
+                    <div class="card-body">
+                        <a href="{{ post.get_absolute_url }}">
+                            <h5 class="card-title">{{ post.title }}</h5>
+                        </a>
+                        <p class="card-text">{{ post.short_description }}</p>
+                    </div>
+                    <div class="card-footer">
+                        <small class="text-muted">Опубликовано {{ post.publish }}. Автор {{ post.author }}</small>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+
+{% include 'paginations.html' with page=page_obj %}
+{%endblock%}
