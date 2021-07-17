@@ -33,7 +33,8 @@ ALLOWED_HOSTS = ['your_site_name.herokuapp.com', 'localhost','127.0.0.1']
 
 INSTALLED_APPS = [
     #...
-    'django.contrib.admin',
+
+
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
@@ -41,6 +42,8 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'blog.apps.BlogConfig',
     'taggit',
+    'bootstrapform',
+    'django.contrib.admin',
 ]
 
 MIDDLEWARE = [
@@ -145,3 +148,6 @@ EMAIL_USE_TLS = True
 db_from_env=dj_database_url.config()
 DATABASES['default'].update(db_from_env)
 
+LOGIN_REDIRECT_URL = 'blog:post_list'
+LOGIN_URL = 'blog:login'
+LOGOUT_URL = 'blog:logout'
