@@ -8,7 +8,7 @@ from django.shortcuts import render, get_object_or_404
 from django.views.generic import ListView
 from taggit.models import Tag
 
-from .forms import EmailPostForm, CommentForm
+from .forms import EmailPostForm, CommentForm, PostForm
 from .forms import LoginForm
 # Create your views here.
 from .models import Post, PostPoint, Comment
@@ -65,6 +65,7 @@ class PostListView(ListView):
     paginate_by = 3
     template_name = 'blog/post/list.html'
 
+
 @login_required
 def post_detail(request, year, month, day, post):
     post_object = get_object_or_404(Post, slug=post, status='published',
@@ -98,6 +99,7 @@ def post_detail(request, year, month, day, post):
                                                      'similar_posts': similar_posts
                                                      })
 
+
 @login_required
 def post_share(request, post_id):
     # Получение статьи по идентификатору.
@@ -123,5 +125,30 @@ def post_share(request, post_id):
 
 @login_required
 def dashboard(request):
-    return render(request,'blog/account/dashboard.html',)
+    return render(request, 'blog/account/dashboard.html', )
 
+
+@login_required
+def dashboard(request):
+    user = request.user
+    posts_pub = Post.objects.filter(author=user, status='published')
+    posts_draft = Post.objects.filter(author=user, status='draft')
+    return render(request, 'blog/account/dashboard.html', {'posts_pub': posts_pub,
+                                                           'posts_draft': posts_draft})
+
+
+@login_required
+def post_add(request):
+    user = request.user
+    if request.method == 'POST':
+        form = PostForm(request.POST, request.FILES)
+        if form.is_valid():
+            post = form.save(commit=False)
+            post.author = user
+            post.save()
+            for tag in form.cleaned_data['tags']:
+                post.tags.add(tag)
+    else:
+        form = PostForm()
+
+    return render(request, 'blog/account/post_add.html', {'form': form})
