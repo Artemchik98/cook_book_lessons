@@ -85,7 +85,7 @@
                                 </a>
                                 <a class="btn btn-success m-2"
                                    href="{% url 'blog:post_delete' post.id %}">Редактировать</a>
-                                <a class="btn btn-danger m-2" href="#">Удалить</a>
+                                <a class="btn btn-danger m-2" href="{% url 'blog:post_delete' post.id %}">Удалить</a>
                             </div>
                         </div>
                     </div>
