@@ -4,7 +4,7 @@ from django.core.mail import send_mail
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.db.models import Count
 from django.http import HttpResponse
-from django.shortcuts import render, get_object_or_404
+from django.shortcuts import redirect,render, get_object_or_404
 from django.views.generic import ListView
 from taggit.models import Tag
 
@@ -37,7 +37,7 @@ def user_login(request):
 
 @login_required
 def post_list(request, tag_slug=None):
-    object_list = Post.objects.all()
+    object_list = Post.objects.filter(status='published')
     tag = None
     if tag_slug:
         tag = get_object_or_404(Tag, slug=tag_slug)
@@ -152,3 +152,27 @@ def post_add(request):
         form = PostForm()
 
     return render(request, 'blog/account/post_add.html', {'form': form})
+
+
+@login_required
+def post_edit(request, post_id):
+    post = get_object_or_404(Post, id=post_id)
+    post_edit_form = PostForm(instance=post)
+    if request.method == 'POST':
+        post_edit_form = PostForm(request.POST, request.FILES, instance=post)
+        if post_edit_form.is_valid():
+            post_edit_form.save()
+    return render(request,
+                  'blog/account/post_edit.html',
+                  {'form': post_edit_form,
+                   'post': post})
+
+@login_required
+def post_delete(requst, post_id):
+    try:
+        post = get_object_or_404(Post,
+                                 id=post_id)
+        post.delete()
+        return redirect('blog:dashboard')
+    except Post.DoesNotExist:
+        return redirect('blog:dashboard')
