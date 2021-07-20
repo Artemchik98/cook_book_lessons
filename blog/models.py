@@ -49,9 +49,9 @@ def save_images(instance, filename):
 
 class PostPoint(models.Model):
     post = models.ForeignKey(Post, on_delete=models.CASCADE, default=None)
-    post_header = models.CharField(max_length=250, default='HEADER')
+    post_point_header = models.CharField(max_length=250, default='HEADER')
     post_point_text = models.TextField(verbose_name='Пункт поста')
-    post_images = models.ImageField(upload_to=save_images, blank=True, verbose_name='Изображение пункта', )
+    post_point_image = models.ImageField(upload_to=save_images, blank=True, verbose_name='Изображение пункта', )
 
     def __str__(self):
         return 'Пункт поста {}'.format(self.post.title)

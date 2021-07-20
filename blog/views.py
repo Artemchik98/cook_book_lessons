@@ -4,11 +4,11 @@ from django.core.mail import send_mail
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.db.models import Count
 from django.http import HttpResponse
-from django.shortcuts import redirect,render, get_object_or_404
+from django.shortcuts import redirect, render, get_object_or_404
 from django.views.generic import ListView
 from taggit.models import Tag
 
-from .forms import EmailPostForm, CommentForm, PostForm
+from .forms import EmailPostForm, CommentForm, PostForm, PostPointForm
 from .forms import LoginForm
 # Create your views here.
 from .models import Post, PostPoint, Comment
@@ -167,6 +167,7 @@ def post_edit(request, post_id):
                   {'form': post_edit_form,
                    'post': post})
 
+
 @login_required
 def post_delete(requst, post_id):
     try:
@@ -176,3 +177,59 @@ def post_delete(requst, post_id):
         return redirect('blog:dashboard')
     except Post.DoesNotExist:
         return redirect('blog:dashboard')
+
+
+@login_required
+def post_point_list(request, post_id):
+    post = get_object_or_404(Post, id=post_id)
+
+    post_points = PostPoint.objects.filter(
+        post=post)
+    return render(request,
+                  'blog/account/post_points.html',
+                  {'post': post,
+                   'post_points': post_points})
+
+
+@login_required
+def post_point_add(request, post_id):
+    post = get_object_or_404(Post, id=post_id)
+    form = PostPointForm()
+
+    if request.method == 'POST':
+        form = PostPointForm(request.POST,
+                             request.FILES)
+        if form.is_valid():
+            post_point = form.save(commit=False)
+            post_point.post = post
+            post_point.save()
+
+    return render(request, 'blog/account/post_point_add.html', {'form': form,
+                                                                'post': post})
+
+
+@login_required
+def post_point_edit(request, post_point_id):
+    post_point = get_object_or_404(PostPoint, id=post_point_id)
+    post = get_object_or_404(Post, id=post_point.post.id)
+    post_point_edit_form = PostPointForm(instance=post_point)
+    if request.method == 'POST':
+        post_point_edit_form = PostPointForm(request.POST, request.FILES,
+                                             instance=post_point)
+        if post_point_edit_form.is_valid():
+            post_point_edit_form.save()
+    return render(request, 'blog/account/post_point_edit.html',
+                  {'form': post_point_edit_form,
+                   'post_point': post_point,
+                   'post': post})
+
+
+@login_required
+def post_point_delete(request, post_point_id):
+    try:
+        post_point = get_object_or_404(PostPoint,
+                                       id=post_point_id)
+        post_point.delete()
+        return redirect('blog:post_point_list', post_id=post_point.post.id)
+    except PostPoint.DoesNotExist:
+        return redirect('blog:post_list')

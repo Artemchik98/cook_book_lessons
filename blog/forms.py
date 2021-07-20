@@ -1,6 +1,6 @@
 from django import forms
 
-from .models import Post
+from .models import Post, PostPoint
 
 
 class EmailPostForm(forms.Form):
@@ -46,5 +46,11 @@ class LoginForm(forms.Form):
 
 class PostForm(forms.ModelForm):
     class Meta:
-        model=Post
-        fields=('title','short_description','image','tags')
+        model = Post
+        fields = ('title', 'short_description', 'image', 'tags')
+
+
+class PostPointForm(forms.ModelForm):
+    class Meta:
+        model = PostPoint
+        fields = ('post_point_header', 'post_point_text', 'post_point_image')
