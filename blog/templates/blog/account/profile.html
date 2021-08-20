@@ -1,0 +1,33 @@
+{% extends 'blog/base_account.html' %}
+{% load  bootstrap %}
+{% block title %}
+    Редактировать пост
+{% endblock %}
+{% block account_content %}
+    <div class="container text-center sign-in">
+        {% if user_form.errors %}
+            <p>{{ user_form.errors }}</p>
+                <p>Что-то забыл</p>
+        {% elif user_form.is_valid  %}
+            <h1 class="h3 mb-3 font-weight-normal">
+                Данные профиля успешно изменнены
+            </h1>
+            <a href="{% url 'blog:dashboard' %}" class="btn btn-dark mb-4">Вернуться к списку ваших постов</a>
+        {% else %}
+            <h1 class="h3 mb-3 font-weight-normal">
+                Пожалуйста заполните поля
+            </h1>
+        {% endif %}
+        <form action="." class="form-sign-in login-form" method="post" enctype="multipart/form-data">
+            {{ user_form.first_name|bootstrap }}
+            {{ user_form.last_name|bootstrap }}
+            {{ user_form.username|bootstrap }}
+            {{ user_form.email|bootstrap }}
+
+            {% csrf_token %}
+            <button class="btn btn-lg btn-primary mt-2" type="submit">
+                Сохранить изменения
+            </button>
+        </form>
+    </div>
+{% endblock %}

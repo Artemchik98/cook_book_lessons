@@ -1,6 +1,7 @@
 from django import forms
 
 from .models import Post, PostPoint
+from .models import User
 
 
 class EmailPostForm(forms.Form):
@@ -54,3 +55,19 @@ class PostPointForm(forms.ModelForm):
     class Meta:
         model = PostPoint
         fields = ('post_point_header', 'post_point_text', 'post_point_image')
+
+
+class UserCreateForm(forms.ModelForm):
+    password = forms.CharField(max_length=40, widget=forms.PasswordInput())
+
+    class Meta:
+        model = User
+        fields = ('first_name', 'last_name',
+                  'username', 'email', 'password')
+
+
+class UserEditForm(forms.ModelForm):
+    class Meta:
+        model = User
+        fields = ('first_name', 'last_name',
+                  'username', 'email')
