@@ -8,7 +8,7 @@ from django.shortcuts import redirect, render, get_object_or_404
 from django.views.generic import ListView
 from taggit.models import Tag
 
-from .forms import EmailPostForm, CommentForm, PostForm, PostPointForm, UserEditForm
+from .forms import EmailPostForm, CommentForm, PostForm, PostPointForm, UserEditForm,SearchForm
 from .forms import LoginForm
 # Create your views here.
 from .models import Post, PostPoint, Comment
@@ -35,9 +35,22 @@ def user_login(request):
     return render(request, 'blog/account/login.html', {'form': form})
 
 
+
 @login_required
 def post_list(request, tag_slug=None):
-    object_list = Post.objects.filter(status='published')
+    search_form = SearchForm()
+    query = None
+
+    if 'query' in request.GET:
+        search_form = SearchForm(request.GET)
+        if search_form.is_valid():
+            query = search_form.cleaned_data['query']
+            try:
+                object_list = Post.objects.filter(title__contains=query, status='published')
+            except:
+                object_list = None
+    else:
+        object_list = Post.objects.filter(status='published')
     tag = None
     if tag_slug:
         tag = get_object_or_404(Tag, slug=tag_slug)
@@ -53,10 +66,10 @@ def post_list(request, tag_slug=None):
     except EmptyPage:
         # Если номер страницы больше, чем общее количество страниц, возвращаем последнюю.
         posts = paginator.page(paginator.num_pages)
-
     return render(request, 'blog/post/list.html', {'page': page,
                                                    'posts': posts,
-                                                   'tag': tag})
+                                                   'tag': tag,
+                                                   'search_form': search_form})
 
 
 class PostListView(ListView):

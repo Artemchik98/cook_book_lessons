@@ -23,10 +23,12 @@ class Post(models.Model):
     updated = models.DateTimeField(auto_now=True, verbose_name='Дата изменения')
     status = models.CharField(max_length=10, choices=STATUS_CHOICES, default='draft', verbose_name='Статус публикации')
     image = models.ImageField(upload_to='product_images/', blank=False, verbose_name='Изображение')
-    tags = TaggableManager()
+    tags = TaggableManager(verbose_name='Теги')
 
     class Meta:
         ordering = ('-publish',)
+        verbose_name ='Публикация'
+        verbose_name_plural ='Публикации'
 
     def __str__(self):
         return self.title
@@ -48,28 +50,31 @@ def save_images(instance, filename):
 
 
 class PostPoint(models.Model):
-    post = models.ForeignKey(Post, on_delete=models.CASCADE, default=None)
-    post_point_header = models.CharField(max_length=250, default='HEADER')
-    post_point_text = models.TextField(verbose_name='Пункт поста')
-    post_point_image = models.ImageField(upload_to=save_images, blank=True, verbose_name='Изображение пункта', )
+    post = models.ForeignKey(Post, on_delete=models.CASCADE, default=None,verbose_name='Пост этапа готовки')
+    post_point_header = models.CharField(max_length=250, default='HEADER',verbose_name='Шапка этапа готовки')
+    post_point_text = models.TextField(verbose_name='Текст этапа готовки')
+    post_point_image = models.ImageField(upload_to=save_images, blank=True, verbose_name='Изображение пункта')
 
     def __str__(self):
         return 'Пункт поста {}'.format(self.post.title)
 
+    class Meta:
+        verbose_name ='Эпап готовки'
+        verbose_name_plural ='Эпапы готовки'
 
 class Comment(models.Model):
-    post = models.ForeignKey(Post, on_delete=models.CASCADE, related_name='comment')
-    name = models.CharField(max_length=80)
+    post = models.ForeignKey(Post, on_delete=models.CASCADE, related_name='comment',verbose_name='Пост комментария')
+    name = models.CharField(max_length=80,verbose_name='Имя')
     email = models.EmailField()
-    body = models.TextField()
-    created = models.DateTimeField(auto_now_add=True)
-    updated = models.DateTimeField(auto_now=True)
-    active = models.BooleanField(default=True)
+    body = models.TextField(verbose_name='Текст комментария')
+    created = models.DateTimeField(auto_now_add=True,verbose_name='Дата создания')
+    updated = models.DateTimeField(auto_now=True,verbose_name='Дата обновления')
+    active = models.BooleanField(default=True,verbose_name='Статус')
 
     class Meta:
         ordering = ('created',)
+        verbose_name = 'Комментарий'
+        verbose_name_plural = 'Комментарии'
 
     def __str__(self):
         return 'Комментарий написан {} о {}'.format(self.name, self.post)
-
-
