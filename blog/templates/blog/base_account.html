@@ -14,6 +14,11 @@
                                 Мои посты
                             </a>
                         </li>
+                        <li>
+                            <a href="{% url 'blog:favourite_posts' %}">
+                                Избранные посты
+                            </a>
+                        </li>
 
                         <li>
                             <a href="{% url 'blog:post_add' %}">
@@ -21,8 +26,8 @@
                             </a>
                         </li>
                         <li>
-                             <a href="{% url 'blog:edit_profile' %}">
-                               Мой профиль
+                            <a href="{% url 'blog:edit_profile' %}">
+                                Мой профиль
                             </a>
                         </li>
                     </ul>

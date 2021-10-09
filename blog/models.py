@@ -24,6 +24,7 @@ class Post(models.Model):
     status = models.CharField(max_length=10, choices=STATUS_CHOICES, default='draft', verbose_name='Статус публикации')
     image = models.ImageField(upload_to='product_images/', blank=False, verbose_name='Изображение')
     tags = TaggableManager(verbose_name='Теги')
+    favourite = models.ManyToManyField(User, related_name='fav_posts', blank=True)
 
     class Meta:
         ordering = ('-publish',)
@@ -37,7 +38,8 @@ class Post(models.Model):
         return reverse('blog:post_detail', args=[self.publish.year,
                                                  self.publish.month,
                                                  self.publish.day,
-                                                 self.slug])
+                                                 self.slug,
+                                                 self.id])
 
     def save(self, *args, **kwargs):
         self.slug = slugify(self.title)
@@ -78,3 +80,6 @@ class Comment(models.Model):
 
     def __str__(self):
         return 'Комментарий написан {} о {}'.format(self.name, self.post)
+
+
+
