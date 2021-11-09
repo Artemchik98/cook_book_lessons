@@ -1,7 +1,16 @@
 from django.contrib.auth import views as auth_views
 from django.urls import path
+from django.urls import include
 
 from . import views
+
+from rest_framework import routers
+from .api import views as apiviews
+
+router = routers.DefaultRouter()
+router.register(r'posts', apiviews.PostViewSet)
+router.register(r'post_points', apiviews.PostPointViewSet)
+
 
 app_name = 'blog'
 urlpatterns = [
@@ -56,4 +65,7 @@ urlpatterns = [
     path('delete_from_favourite_in_dashboard/<int:post_id>/',
          views.delete_from_favourite_in_dashboard,
          name='delete_from_favourite_in_dashboard'),
+
+    path('api/', include(router.urls)),
+
 ]
